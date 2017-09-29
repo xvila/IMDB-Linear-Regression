@@ -1,0 +1,23 @@
+#Ipython Notebook Temp files
+*copy*.ipynb
+untitled*
+untitled*.ipynb
+*Copy*.ipynb
+Untitled*
+Untitled*.ipynb
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
+# OSX Filesystem thing
+.DS_Store
+# Ignore Database files
+*.db
+*.sqlite
+
+# Ignore data files
+*.csv
+*.json

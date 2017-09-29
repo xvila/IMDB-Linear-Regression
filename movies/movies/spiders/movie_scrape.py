@@ -1,10 +1,10 @@
 import scrapy
 
 class MovieSpider(scrapy.Spider):
-    name = 'imbd'
+    name = 'scrape_imdb'
 
     custom_settings = {
-        #"DOWNLOAD_DELAY": 3,
+        # "DOWNLOAD_DELAY": 3,
         "CONCURRENT_REQUESTS_PER_DOMAIN": 3,
         "HTTPCACHE_ENABLED": True
     } 
@@ -42,6 +42,9 @@ class MovieSpider(scrapy.Spider):
         user_rating1 = response.xpath('//div[@class="ratingValue"]//span/text()').extract()
         genre = response.xpath('//div[@itemprop="genre"]/a/text()').extract()
         year1 = response.xpath('//span[@id="titleYear"]/a/text()').extract()
+        rating1 = response.xpath('//meta[@itemprop="contentRating"]/../text()').extract()
+        runtime1 = response.xpath('//div[@class="txt-block"]/time/text()').extract()
+        director1 = response.xpath('//span[@itemprop="director"]/a/span/text()').extract()
         # remove the index array for the xpath extracts and add if conditions.
         # bl1 = response.xpath('//*[@id="bling"]/li/a/text()')
         # if bl1:
@@ -61,8 +64,18 @@ class MovieSpider(scrapy.Spider):
             name = name1[0]
         else:
             name = None
-
-
+        if rating1:
+            rating = rating1[1]
+        else:
+            rating = None
+        if runtime1:
+            runtime = runtime1[0]
+        else:
+            runtime = None
+        if director1:
+            director = director1[0]
+        else:
+            director = None
         yield{
         'url': url,
         'name': name,
@@ -70,5 +83,8 @@ class MovieSpider(scrapy.Spider):
         'box_office': box_office,
         'user_rating': user_rating,
         'genre': genre,
-        'year': year
+        'year': year,
+        'rating': rating,
+        'runtime': runtime,
+        'director': director
         }
