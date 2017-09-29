@@ -39,7 +39,8 @@ class OriginalSpider(scrapy.Spider):
         except:
             user_rating = None
         try:
-            genre = str(response.xpath('//div[@itemprop="genre"]/a/text()').extract())
+            genre = response.xpath('//div[@itemprop="genre"]/a/text()').extract()
+
         except:
             genre = None
         try:
