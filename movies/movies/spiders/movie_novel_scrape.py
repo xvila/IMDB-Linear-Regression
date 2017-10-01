@@ -1,24 +1,38 @@
 import scrapy
 
-class OriginalSpider(scrapy.Spider):
-    name = 'scrape_orginal_screenplay'
+class MovieSpider(scrapy.Spider):
+    name = 'movie_novel_scrape'
 
     custom_settings = {
         # "DOWNLOAD_DELAY": 3,
         "CONCURRENT_REQUESTS_PER_DOMAIN": 3,
         "HTTPCACHE_ENABLED": True
     } 
-    start_urls = ['http://www.imdb.com/list/ls000048075/']
+    start_urls = []
+    
+    for i in range(1,612):
+        #base = 'http://www.imdb.com/search/title?release_date={}'
+        base = 'http://www.imdb.com/search/keyword?keywords=based-on-novel&mode=detail&page={}&ref_=kw_nxt&sort=moviemeter,asc'
+        url = base.format(i)
+        start_urls.append(url)
 
     def parse(self, response):
         # Extract the links to the individual movie
         static_movie_url = 'http://www.imdb.com'
+        static_list_url = 'http://www.imdb.com/search/title'
 
-        for href in response.xpath('//div[@class="info"]/b/a/@href').extract():
+        for href in response.xpath('//h3/a/@href').extract():
             href = static_movie_url + href
             yield scrapy.Request(
                 url=href, callback=self.parse_movie,
                 meta={'url':href})
+        
+        # Follow pagination links and repeat
+        # next_url = response.xpath(
+        #     '//div[@class="desc"]/a/@href'
+        # )[1].extract()
+        # next_url = static_list_url + next_url
+        # yield scrapy.Request(url=next_url,callback=self.parse)
 
     def parse_movie(self,response): 
         url = response.request.meta['url']
@@ -60,7 +74,6 @@ class OriginalSpider(scrapy.Spider):
             runtime = None
         try:
             director = response.xpath('//span[@itemprop="director"]/a/span/text()').extract()[0]
-
         except:
             director = None
      

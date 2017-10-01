@@ -36,46 +36,47 @@ class MovieSpider(scrapy.Spider):
 
     def parse_movie(self,response): 
         url = response.request.meta['url']
-        name1 = response.xpath('//div[@class="title_wrapper"]/h1/text()').extract()
-        budget = response.xpath('//div[@class="txt-block"]/h4/text()[contains(.,"Budget")]/../../text()').extract()
-        box_office = response.xpath('//div[@class="txt-block"]/h4/text()[contains(.,"Gross")]/../../text()').extract()
-        user_rating1 = response.xpath('//div[@class="ratingValue"]//span/text()').extract()
-        genre = response.xpath('//div[@itemprop="genre"]/a/text()').extract()
-        year1 = response.xpath('//span[@id="titleYear"]/a/text()').extract()
-        rating1 = response.xpath('//meta[@itemprop="contentRating"]/../text()').extract()
-        runtime1 = response.xpath('//div[@class="txt-block"]/time/text()').extract()
-        director1 = response.xpath('//span[@itemprop="director"]/a/span/text()').extract()
-        # remove the index array for the xpath extracts and add if conditions.
-        # bl1 = response.xpath('//*[@id="bling"]/li/a/text()')
-        # if bl1:
-        #     bling1 = bl1.extract()[0]
-        # else:
-        #     bling1 = 'None'
-
-        if year1:
-            year = year1[0] 
-        else:
-            year = None
-        if user_rating1:
-            user_rating = user_rating1[0]
-        else:
-            user_rating = None
-        if name1:
-            name = name1[0]
-        else:
+        try:
+            name = response.xpath('//div[@class="title_wrapper"]/h1/text()').extract()[0].strip()
+        except:
             name = None
-        if rating1:
-            rating = rating1[1]
-        else:
+        try:
+            budget = response.xpath('//div[@class="txt-block"]/h4/text()[contains(.,"Budget")]/../../text()').extract()[1].strip()
+        except:
+            budget = None
+        try:
+            box_office = response.xpath('//div[@class="txt-block"]/h4/text()[contains(.,"Gross")]/../../text()').extract()[1].strip()
+        except:
+            box_office = None
+        try:
+            release_date = response.xpath('//div[@class="txt-block"]/h4/text()[contains(.,"Release Date:")]/../../text()').extract()[1].strip()
+        except:
+            release_date = None
+        try:
+            user_rating = response.xpath('//div[@class="ratingValue"]//span/text()').extract()[0]
+        except:
+            user_rating = None
+        try:
+            genre = response.xpath('//div[@itemprop="genre"]/a/text()').extract()
+        except:
+            genre = None
+        try:
+            year = response.xpath('//span[@id="titleYear"]/a/text()').extract()[0]
+        except:
+            year = None
+        try:
+            rating = response.xpath('//meta[@itemprop="contentRating"]/../text()').extract()[1].strip()
+        except:
             rating = None
-        if runtime1:
-            runtime = runtime1[0]
-        else:
+        try:
+            runtime = response.xpath('//div[@class="txt-block"]/time/text()').extract()[0]
+        except:
             runtime = None
-        if director1:
-            director = director1[0]
-        else:
+        try:
+            director = response.xpath('//span[@itemprop="director"]/a/span/text()').extract()[0]
+        except:
             director = None
+     
         yield{
         'url': url,
         'name': name,
@@ -86,5 +87,6 @@ class MovieSpider(scrapy.Spider):
         'year': year,
         'rating': rating,
         'runtime': runtime,
-        'director': director
+        'director': director,
+        'release_date': release_date
         }
